@@ -7,6 +7,7 @@ from api.utils.database import db
 from api.utils.responses import response_with
 import api.utils.responses as resp
 from api.routes.users import user_routes
+from api.routes.keys import key_routes
 
 
 app = Flask(__name__)
@@ -20,6 +21,7 @@ else:
 
 app.config.from_object(app_config)
 app.register_blueprint(user_routes, url_prefix='/api/users')
+app.register_blueprint(key_routes, url_prefix='/api/keys')
 
 @app.after_request
 def add_header(response):
