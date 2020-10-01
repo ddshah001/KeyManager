@@ -45,4 +45,11 @@ def update_user_details(user_id):
     user = user_schema.dump(get_user)
     return response_with(resp.SUCCESS_200, value={"user":user})
 
+@user_routes.route('/<int:user_id>', methods = ['DELETE'])
+def delete_user(user_id):
+    get_user = User.query.get_or_404(user_id)
+    db.session.delete(get_user)
+    db.session.commit()
+    return response_with(resp.SUCCESS_204)
+
 
