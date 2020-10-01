@@ -18,3 +18,18 @@ def create_user():
     except Exception as e:
         print(e)
         return response_with(resp.INVALID_INPUT_422)
+
+@user_routes.route('/', methods = ['GET'])
+def get_user_list():
+    users_data = User.query.all()
+    user_schema = UserSchema(many=True, only=['name', 'username', 'email', 'id'])
+    users = user_schema.dump(users_data)
+    return response_with(resp.SUCCESS_200, value={"users": users})
+
+@user_routes.route('/<int:user_id>', methods = ['GET'] )
+def get_user_details(user_id):
+    user_data = User.query.get_or_404(user_id)
+    user_schema = UserSchema()
+    user = user_schema.dump(user_data)
+    return response_with(resp.SUCCESS_200, value={"user": user})
+
