@@ -33,3 +33,16 @@ def get_user_details(user_id):
     user = user_schema.dump(user_data)
     return response_with(resp.SUCCESS_200, value={"user": user})
 
+@user_routes.route('/<int:user_id>', methods = ['PUT'])
+def update_user_details(user_id):
+    data = request.get_json()
+    get_user = User.query.get_or_404(user_id)
+    get_user.name = data['name']
+    get_user.email = data['email']
+    #db.session.add(get_user)
+    db.session.commit()
+    user_schema = UserSchema()
+    user = user_schema.dump(get_user)
+    return response_with(resp.SUCCESS_200, value={"user":user})
+
+

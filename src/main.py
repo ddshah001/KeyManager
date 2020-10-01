@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from flask import Flask
 from flask import jsonify
 from api.config.config import DevelopmentConfig, TestingConfig, ProductionConfig
@@ -45,6 +46,8 @@ def not_found(e):
 db.init_app(app)
 with app.app_context():
     db.create_all()
+
+logging.basicConfig(stream=sys.stdout,format='%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s|%(message)s',level=logging.DEBUG)
 
 if __name__ == "__main__":
     app.run(port=5000, host="0.0.0.0", use_reloader=False)
