@@ -4,6 +4,7 @@ from api.utils.responses import response_with
 from api.utils import responses as resp
 from api.models.users import User, UserSchema
 from api.utils.database import db
+from flask_jwt_extended import create_access_token, jwt_required
 
 user_routes = Blueprint("user_routes", __name__)
 
@@ -20,6 +21,7 @@ def create_user():
         return response_with(resp.INVALID_INPUT_422)
 
 @user_routes.route('/', methods = ['GET'])
+@jwt_required
 def get_user_list():
     users_data = User.query.all()
     user_schema = UserSchema(many=True, only=['name', 'username', 'email', 'id'])
@@ -27,6 +29,7 @@ def get_user_list():
     return response_with(resp.SUCCESS_200, value={"users": users})
 
 @user_routes.route('/<int:user_id>', methods = ['GET'] )
+@jwt_required
 def get_user_details(user_id):
     user_data = User.query.get_or_404(user_id)
     user_schema = UserSchema()
@@ -34,6 +37,7 @@ def get_user_details(user_id):
     return response_with(resp.SUCCESS_200, value={"user": user})
 
 @user_routes.route('/<int:user_id>', methods = ['PUT'])
+@jwt_required
 def update_user_details(user_id):
     data = request.get_json()
     get_user = User.query.get_or_404(user_id)
@@ -46,10 +50,29 @@ def update_user_details(user_id):
     return response_with(resp.SUCCESS_200, value={"user":user})
 
 @user_routes.route('/<int:user_id>', methods = ['DELETE'])
+@jwt_required
 def delete_user(user_id):
     get_user = User.query.get_or_404(user_id)
     db.session.delete(get_user)
     db.session.commit()
     return response_with(resp.SUCCESS_204)
+
+@user_routes.route('/login', methods = ['POST'])
+def user_login():
+    try:
+        data = request.get_json()
+        current_user = User.find_by_username(data['username'])
+        if not current_user:
+            return response_with(resp.SERVER_ERROR_404)
+        if User.verify_hash(data['password'],current_user.password):
+            token = create_access_token(identity=data['username'])
+            return response_with(resp.SUCCESS_201, value={'message': 'Logged in as {}'.format(current_user.username), "access_token": token})
+        else:
+            return response_with(resp.UNAUTHORIZED_403)
+    except Exception as e:
+        print(e)
+        return response_with(resp.INVALID_INPUT_422)
+
+
 
 

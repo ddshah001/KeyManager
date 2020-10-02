@@ -2,6 +2,7 @@ class Config(object):
     DEBUG = False
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SECRET_KEY = "HelloSecret"
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = "mysql+pymysql://keymanager:acyfgbafxbfuUYXF@localhost:3306/keymanager"

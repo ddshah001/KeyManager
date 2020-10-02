@@ -26,6 +26,14 @@ class User(db.Model):
         db.session.add(self)
         db.session.commit()
         return self
+    
+    @classmethod
+    def find_by_username(cls, username):
+        return cls.query.filter_by(username = username).first()
+
+    @staticmethod
+    def verify_hash(password,hash):
+        return sha256_crypt.verify(password,hash)
 
 class UserSchema(ModelSchema):
     class Meta(ModelSchema.Meta):

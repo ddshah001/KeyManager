@@ -9,6 +9,7 @@ from api.utils.responses import response_with
 import api.utils.responses as resp
 from api.routes.users import user_routes
 from api.routes.keys import key_routes
+from flask_jwt_extended import JWTManager
 
 
 app = Flask(__name__)
@@ -44,6 +45,7 @@ def not_found(e):
     return response_with(resp.SERVER_ERROR_404)
 
 db.init_app(app)
+jwt = JWTManager(app)
 with app.app_context():
     db.create_all()
 
