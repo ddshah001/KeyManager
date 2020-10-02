@@ -17,3 +17,31 @@ def create_key():
     except Exception as e:
         print(e)
         return response_with(resp.INVALID_INPUT_422)
+
+@key_routes.route('/',methods=['GET'])
+def get_key_list():
+    key_data = Key.query.all()
+    key_schema = KeySchema(many=True, only=['id', 'name', 'user_id'])
+    keys = key_schema.dump(key_data)
+    return response_with(resp.SUCCESS_200, value={'keys': keys})
+
+@key_routes.route('/<int:id>', methods = ['PUT'])
+def update_key(id):
+    data = request.get_json()
+    get_key = Key.query.get_or_404(id)
+    get_key.name = data['name']
+    get_key.data = data['data']
+    db.session.commit()
+    key_schema = KeySchema()
+    key = KeySchema.dump(get_key)
+    return response_with(resp.SUCCESS_200, value={'key':key})
+
+@key_routes.route('/<int:id>', methods = ['DELETE'])
+def delete_key(id):
+    get_key = Key.query.get_or_404(id)
+    db.session.delete(get_key)
+    db.session.commit()
+    return response_with(resp.SUCCESS_204)
+
+
+
