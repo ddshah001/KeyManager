@@ -11,8 +11,9 @@ class User(db.Model):
     name = db.Column(db.String(128))
     username = db.Column(db.String(128))
     password = db.Column(db.String(1024))
-    email = db.Column(db.String(128))
+    email = db.Column(db.String(128), unique=True, nullable=False)
     created = db.Column(db.DateTime, server_default=db.func.now())
+    isVerified = db.Column(db.Boolean, nullable=False, default=False)
     keys = db.relationship('Key', backref='User', cascade="all, delete-orphan")
 
     def __init__(self, name, username, password, email, keys=[]):
@@ -30,6 +31,10 @@ class User(db.Model):
     @classmethod
     def find_by_username(cls, username):
         return cls.query.filter_by(username = username).first()
+    
+    @classmethod
+    def find_by_email(cls, email):
+        return cls.query.filter_by(email = email).first()
 
     @staticmethod
     def verify_hash(password,hash):

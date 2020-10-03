@@ -3,6 +3,7 @@ class Config(object):
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = "HelloSecret"
+    SECURITY_PASSWORD_SALT = "asduinuaisbdcaspvauhctfaxyubduycqwe"
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = "mysql+pymysql://keymanager:acyfgbafxbfuUYXF@localhost:3306/keymanager"
