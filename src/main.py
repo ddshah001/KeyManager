@@ -10,6 +10,7 @@ import api.utils.responses as resp
 from api.routes.users import user_routes
 from api.routes.keys import key_routes
 from flask_jwt_extended import JWTManager
+from api.utils.email import mail
 
 
 app = Flask(__name__)
@@ -46,6 +47,7 @@ def not_found(e):
 
 db.init_app(app)
 jwt = JWTManager(app)
+mail.init_app(app)
 with app.app_context():
     db.create_all()
 
